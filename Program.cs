@@ -8,8 +8,7 @@ public static class Program
 {
   private static readonly string gitBranchWithRemote = "--no-pager branch --all --list --color=never";
   private static readonly string gitBranchWithoutRemote = "--no-pager branch --list --color=never";
-  private static readonly string remotePrefix = "remote/";
-  private static readonly int remotePrefixLength = remotePrefix.Length;
+  private static readonly string remotePrefix = "remotes/";
 
   public static List<Branch> ExtractBranchListFromGitOutput(string gitOutput)
     => gitOutput
@@ -24,7 +23,7 @@ public static class Program
         if (branch.StartsWith(remotePrefix))
         {
           isRemote = true;
-          branch = branch[remotePrefixLength..];
+          branch = string.Join('/', branch.Split(" ").First().Split("/").Skip(2));
         }
 
         return new Branch(branch, isRemote, isCurrent);
