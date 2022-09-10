@@ -76,11 +76,25 @@ public static class Program
     return ExtractBranchListFromGitOutput(gitOutput);
   }
 
+  private static List<Branch> BuildBranchListWithExit(bool includeRemote)
+  {
+    try
+    {
+      return BuildBranchList(includeRemote);
+    }
+    catch (GitException e)
+    {
+      Console.WriteLine(e.Message);
+      Environment.Exit(e.ExitCode);
+      return new(); // unreachable
+    }
+  }
+
   public static void Main(string[] args)
   {
     var includeRemote = false;
     string? filter = null;
-    var branches = BuildBranchList(includeRemote);
+    var branches = BuildBranchListWithExit(includeRemote);
 
     while (true)
     {
@@ -116,7 +130,7 @@ public static class Program
       {
         includeRemote = !includeRemote;
         filter = null;
-        branches = BuildBranchList(includeRemote);
+        branches = BuildBranchListWithExit(includeRemote);
       }
       else if (query.StartsWith('/'))
       {
@@ -146,11 +160,19 @@ public static class Program
         Arguments = args,
         UseShellExecute = false,
         RedirectStandardOutput = true,
+        RedirectStandardError = true,
         CreateNoWindow = true
       }
     };
     proc.Start();
-    return proc.StandardOutput.ReadToEnd();
+    var output = proc.StandardOutput.ReadToEnd();
+    proc.WaitForExit();
+    if (proc.ExitCode != 0)
+    {
+      var errorOutput = proc.StandardError.ReadToEnd();
+      throw new GitException((output + errorOutput).Trim(), proc.ExitCode);
+    }
+    return output;
   }
 
   private static void GitCheckout(string branchName)
@@ -169,8 +191,8 @@ public static class Program
     };
     proc.Start();
     proc.WaitForExit();
-    Console.Write(proc.StandardOutput.ReadToEnd());
-    Console.Write(proc.StandardError.ReadToEnd());
+    var output = proc.StandardOutput.ReadToEnd() + proc.StandardError.ReadToEnd();
+    Console.Write(output.Trim());
     Environment.ExitCode = proc.ExitCode;
   }
 }
@@ -178,3 +200,12 @@ public static class Program
 public record Branch(string Name, bool IsRemote = false, bool IsCurrent = false);
 
 public record BranchDisplay(string BranchLine, string BranchName);
+
+public class GitException : Exception
+{
+  public int ExitCode { get; set; }
+  public GitException(string message, int exitCode) : base(message)
+  {
+    ExitCode = exitCode;
+  }
+}
