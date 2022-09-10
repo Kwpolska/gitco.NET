@@ -4,11 +4,12 @@ Gitco.NET
 This is a small .NET console app for checking out a Git branch without
 memorizing branch names, or copy-pasting from `git branch`.
 
-This app works on Windows and Linux. Windows executables can be found
-in [GitHub Releases](https://github.com/Kwpolska/gitco/releases).
+This app works on Windows, Linux, and macOS. Executables for all three platforms
+can be found in [GitHub Releases](https://github.com/Kwpolska/gitco/releases).
 
 Linux users might also want to check out the original
-[gitco Ruby script](https://github.com/Kwpolska/gitco).
+[gitco Ruby script](https://github.com/Kwpolska/gitco) (but the .NET version
+works too, and is probably nicer/faster/more resilient).
 
 ![gitco](https://github.com/Kwpolska/gitco.NET/raw/master/gitco.png)
 
