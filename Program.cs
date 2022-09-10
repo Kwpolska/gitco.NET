@@ -34,40 +34,55 @@ public static class Program
 
   public static void PrintHeader(string? filter)
   {
+    Console.ForegroundColor = ConsoleColor.Cyan;
     if (filter != null)
     {
       var fLines = new StringBuilder().Append('-', filter.Length).ToString();
-      Console.WriteLine($"\x1b[36;1mChoose a Branch (Filter: {filter})\x1b[0m");
-      Console.WriteLine($"\x1b[36;1m-------------------------{fLines}-\x1b[0m\n");
+      Console.WriteLine($"Choose a Branch (Filter: {filter})");
+      Console.WriteLine($"-------------------------{fLines}-\n");
     }
     else
     {
-      Console.WriteLine("\x1b[36;1mChoose a Branch\x1b[0m");
-      Console.WriteLine("\x1b[36;1m---------------\x1b[0m\n");
+      Console.WriteLine("Choose a Branch");
+      Console.WriteLine("---------------\n");
     }
+    Console.ResetColor();
   }
 
-  public static string FormatBranches(List<Branch> branches, string? filter)
+  public static IEnumerable<BranchDisplay> FormatBranches(List<Branch> branches, string? filter)
   {
     var branchWidth = (branches.Count + 1).ToString(CultureInfo.InvariantCulture).Length;
-    var formatString = $"\x1b[1m{{0,{branchWidth}}}.\x1b[0m {{1}}";
+    var numberFormatString = $"{{0,{branchWidth}}}. ";
 
-    var branchLines = branches.Select(
+    return branches.Select(
         (branch, index) =>
-        {
-          var branchDisplay = branch.Name;
-          if (branch.IsCurrent) branchDisplay = $"\x1b[32;1m{branchDisplay}\x1b[0m";
-          if (branch.IsRemote) branchDisplay = $"{branchDisplay} \x1b[35m(R)\x1b[0m";
-          var branchLine = string.Format(formatString, index + 1, branchDisplay);
-          return new BranchDisplay(branchLine, branch.Name);
-        }).Where(branchDisplay => filter == null || branchDisplay.BranchName.Contains(filter))
-      .Select(branchDisplay => branchDisplay.BranchLine);
-
-    return string.Join('\n', branchLines);
+          new BranchDisplay(
+            Number: string.Format(numberFormatString, index + 1),
+            BranchName: branch.Name,
+            IsRemote: branch.IsRemote,
+            IsCurrent: branch.IsCurrent
+          )
+        ).Where(branchDisplay => filter == null || branchDisplay.BranchName.Contains(filter));
   }
 
   public static void PrintBranches(List<Branch> branches, string? filter)
-    => Console.WriteLine(FormatBranches(branches, filter));
+  {
+    foreach (var branchDisplay in FormatBranches(branches, filter))
+    {
+      Console.ForegroundColor = ConsoleColor.White;
+      Console.Write(branchDisplay.Number);
+      Console.ResetColor();
+      if (branchDisplay.IsCurrent) Console.ForegroundColor = ConsoleColor.Green;
+      Console.Write(branchDisplay.BranchName);
+      if (branchDisplay.IsRemote)
+      {
+        Console.ForegroundColor = ConsoleColor.DarkMagenta;
+        Console.Write(" (R)");
+      }
+      Console.ResetColor();
+      Console.WriteLine();
+    }
+  } 
 
   public static List<Branch> BuildBranchList(bool includeRemote)
   {
@@ -100,10 +115,13 @@ public static class Program
     {
       PrintHeader(filter);
       PrintBranches(branches, filter);
-
+      
+      Console.ForegroundColor = ConsoleColor.DarkCyan;
       Console.WriteLine(
-        "\n\x1b[36mnumber → select    M → master    R → show remote branches    /QUERY → filter\x1b[0m");
-      Console.Write("\x1b[36;1m>\x1b[0m ");
+        "\nnumber → select    M → master    R → show remote branches    /QUERY → filter");
+      Console.ForegroundColor = ConsoleColor.Cyan;
+      Console.Write("> ");
+      Console.ResetColor();
 
       var query = Console.ReadLine();
       if (query == null)
@@ -145,7 +163,10 @@ public static class Program
       }
       else
       {
-        Console.WriteLine("\x1b[31;1mError:\x1b[0m no number specified!\n\n");
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.Write("Error:");
+        Console.ResetColor();
+        Console.WriteLine("no number specified!\n\n");
       }
     }
   }
@@ -199,7 +220,7 @@ public static class Program
 
 public record Branch(string Name, bool IsRemote = false, bool IsCurrent = false);
 
-public record BranchDisplay(string BranchLine, string BranchName);
+public record BranchDisplay(string Number, string BranchName, bool IsRemote, bool IsCurrent);
 
 public class GitException : Exception
 {
