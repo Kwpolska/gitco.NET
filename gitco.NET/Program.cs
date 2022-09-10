@@ -13,6 +13,7 @@ public static class Program
   public static List<Branch> ExtractBranchListFromGitOutput(string gitOutput)
     => gitOutput
       .TrimEnd()
+      .ReplaceLineEndings("\n")
       .Split('\n')
       .Select(branchLine =>
       {
@@ -49,9 +50,9 @@ public static class Program
     Console.ResetColor();
   }
 
-  public static IEnumerable<BranchDisplay> FormatBranches(List<Branch> branches, string? filter)
+  public static IEnumerable<BranchDisplay> FilterAndNumberBranches(List<Branch> branches, string? filter)
   {
-    var branchWidth = (branches.Count + 1).ToString(CultureInfo.InvariantCulture).Length;
+    var branchWidth = (branches.Count).ToString(CultureInfo.InvariantCulture).Length;
     var numberFormatString = $"{{0,{branchWidth}}}. ";
 
     return branches.Select(
@@ -67,7 +68,7 @@ public static class Program
 
   public static void PrintBranches(List<Branch> branches, string? filter)
   {
-    foreach (var branchDisplay in FormatBranches(branches, filter))
+    foreach (var branchDisplay in FilterAndNumberBranches(branches, filter))
     {
       Console.ForegroundColor = ConsoleColor.White;
       Console.Write(branchDisplay.Number);
@@ -220,7 +221,7 @@ public static class Program
 
 public record Branch(string Name, bool IsRemote = false, bool IsCurrent = false);
 
-public record BranchDisplay(string Number, string BranchName, bool IsRemote, bool IsCurrent);
+public record BranchDisplay(string Number, string BranchName, bool IsRemote = false, bool IsCurrent = false);
 
 public class GitException : Exception
 {
