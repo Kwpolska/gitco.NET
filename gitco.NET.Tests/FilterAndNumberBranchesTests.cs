@@ -1,4 +1,4 @@
-﻿/*
+/*
  * gitco.NET
  * Copyright © 2014-2022, Chris Warrick. All rights reserved.
  * Licensed under the 3-clause BSD license. See /LICENSE for details.
