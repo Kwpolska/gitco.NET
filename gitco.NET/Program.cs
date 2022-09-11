@@ -86,7 +86,7 @@ public static class Program
 
   public static IEnumerable<BranchDisplay> FilterAndNumberBranches(List<Branch> branches, string? filter)
   {
-    var branchWidth = (branches.Count).ToString(CultureInfo.InvariantCulture).Length;
+    var branchWidth = branches.Count.ToString(CultureInfo.InvariantCulture).Length;
     var numberFormatString = $"{{0,{branchWidth}}}. ";
 
     return branches.Select(

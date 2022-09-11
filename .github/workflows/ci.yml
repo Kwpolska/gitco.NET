@@ -39,7 +39,7 @@ jobs:
       - name: Publish framework-dependent
         run: dotnet publish -v normal -c Release -o publishFD -r ${{ matrix.runtime }} --no-self-contained gitco.NET/gitco.NET.csproj
       - name: Publish self-contained
-        run: dotnet publish -v normal -c Release -o publishSC -r ${{ matrix.runtime }} --self-contained gitco.NET/gitco.NET.csproj
+        run: dotnet publish -v normal -c Release -o publishSC -r ${{ matrix.runtime }} --self-contained -p:PublishTrimmed=true gitco.NET/gitco.NET.csproj
       - name: Upload framework-dependent
         uses: actions/upload-artifact@v3
         with:
