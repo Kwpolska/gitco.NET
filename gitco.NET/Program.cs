@@ -63,7 +63,8 @@ public static class Program
 
         return new Branch(branch, isRemote, isCurrent);
       })
-      .OrderBy(b => b.Name + (b.IsRemote ? "1" : "0"))
+      .OrderBy(b => b.Name)
+      .ThenBy(b => b.IsRemote)
       .DistinctBy(b => b.Name)
       .ToList();
 
