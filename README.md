@@ -16,7 +16,7 @@ works too, and is probably nicer/faster/more resilient).
 License
 -------
 
-Copyright © 2014-2022, Chris Warrick.
+Copyright © 2014-2023, Chris Warrick.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
