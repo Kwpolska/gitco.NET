@@ -147,6 +147,9 @@ public static class Program
     string? filter = null;
     var branches = BuildBranchListWithExit(includeRemote);
 
+    var quickBranchKey = Environment.GetEnvironmentVariable("GITCO_QUICK_BRANCH_KEY") ?? "M";
+    var quickBranchName = Environment.GetEnvironmentVariable("GITCO_QUICK_BRANCH_NAME") ?? "master";
+
     while (true)
     {
       PrintHeader(filter);
@@ -154,7 +157,7 @@ public static class Program
 
       Console.ForegroundColor = ConsoleColor.DarkCyan;
       Console.WriteLine(
-        "\nnumber → select    M → master    R → show remote branches    /QUERY → filter");
+        $"\nnumber → select    {quickBranchKey} → {quickBranchName}    R → show remote branches    /QUERY → filter");
       Console.ForegroundColor = ConsoleColor.Cyan;
       Console.Write("> ");
       Console.ResetColor();
@@ -169,13 +172,13 @@ public static class Program
 
       query = query.Trim();
 
-      if (query == "M")
+      if (query == quickBranchKey)
       {
-        GitCheckout("master");
+        GitCheckout(quickBranchName);
         return;
       }
 
-      if (query.ToLower().StartsWith("q"))
+      if (query.Equals("q", StringComparison.InvariantCultureIgnoreCase))
       {
         return;
       }

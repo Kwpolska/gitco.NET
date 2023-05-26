@@ -13,6 +13,14 @@ works too, and is probably nicer/faster/more resilient).
 
 ![gitco](https://github.com/Kwpolska/gitco.NET/raw/master/gitco.png)
 
+Configuration
+-------------
+
+Gitco.NET can be configured via environment variables:
+
+* `GITCO_QUICK_BRANCH_KEY` — key that can be used to quickly choose a branch, defaults to `M`
+* `GITCO_QUICK_BRANCH_NAME` — the branch that can be quickly chosen, defaults to `master`
+
 License
 -------
 

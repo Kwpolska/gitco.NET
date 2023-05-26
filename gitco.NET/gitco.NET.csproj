@@ -3,8 +3,8 @@
   <PropertyGroup>
     <AssemblyName>gitco</AssemblyName>
     <Description>A small .NET app to checkout a desired git branch.</Description>
-    <Version>1.0.0</Version>
-    <AssemblyVersion>1.0.0</AssemblyVersion>
+    <Version>1.1.0</Version>
+    <AssemblyVersion>1.1.0</AssemblyVersion>
     <Authors>Chris Warrick</Authors>
     <Copyright>Copyright (C) 2014-2023, Chris Warrick. All rights reserved. Licensed under the 3-clause BSD license.</Copyright>
     <OutputType>Exe</OutputType>
